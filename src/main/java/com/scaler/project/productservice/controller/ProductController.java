@@ -3,8 +3,8 @@ package com.scaler.project.productservice.controller;
 import com.scaler.project.productservice.exception.ProductNotFoundException;
 import com.scaler.project.productservice.models.Product;
 import com.scaler.project.productservice.service.ProductService;
-import com.scaler.project.productservice.service.impl.FakeStoreProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,22 +15,22 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-    private final ProductService fakeStoreProductService;
+    private final ProductService productService;
 
     @Autowired
-    public ProductController(FakeStoreProductService fakeStoreProductService) {
-        this.fakeStoreProductService = fakeStoreProductService;
+    public ProductController(@Qualifier("selfProductService") ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping
     public List<Product> getAllProducts() {
-        return fakeStoreProductService.getAllProducts();
+        return productService.getAllProducts();
     }
 
     @GetMapping(value = "{id}")
     public ResponseEntity<Product> getSingleProduct(@PathVariable("id") Long id) throws ProductNotFoundException {
         //return new ResponseEntity<>(fakeStoreProductService.getByProductId(id), HttpStatus.OK);
-        Product product = fakeStoreProductService.getByProductId(id);
+        Product product = productService.getByProductId(id);
         if (null == product) {
             throw new ProductNotFoundException("Product with Id: " + id + " not found.");
         }
@@ -39,7 +39,9 @@ public class ProductController {
 
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
-        return new Product();
+
+        Product p = productService.createProduct(product);
+        return p;
     }
 
     @PutMapping("{id}")

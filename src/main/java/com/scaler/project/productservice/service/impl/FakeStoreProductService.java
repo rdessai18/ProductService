@@ -1,19 +1,16 @@
 package com.scaler.project.productservice.service.impl;
 
-import com.scaler.project.productservice.constant.FakeStoreURI;
 import com.scaler.project.productservice.dto.FakeStoreProductDto;
-import com.scaler.project.productservice.dto.Rating;
 import com.scaler.project.productservice.exception.ProductNotFoundException;
 import com.scaler.project.productservice.models.Category;
 import com.scaler.project.productservice.models.Product;
+import com.scaler.project.productservice.projections.ProductWithIdAndTitle;
 import com.scaler.project.productservice.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.*;
 
 import static com.scaler.project.productservice.constant.FakeStoreURI.GET_PRODUCT_URI;
@@ -45,7 +42,6 @@ public class FakeStoreProductService implements ProductService {
         product.setCategory(new Category());
         product.getCategory().setName(fakeStoreProductDto.getCategory());
         product.setDescription(fakeStoreProductDto.getDescription());
-        product.setImage(fakeStoreProductDto.getImage());
         return product;
     }
 
@@ -58,5 +54,15 @@ public class FakeStoreProductService implements ProductService {
         }
         System.out.println(productList);
         return  productList;
+    }
+
+    @Override
+    public Product createProduct(Product product) {
+        return null;
+    }
+
+    @Override
+    public ProductWithIdAndTitle getProductByIdAndTitle(Long id) {
+        return null;
     }
 }
