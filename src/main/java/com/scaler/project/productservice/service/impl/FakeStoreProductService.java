@@ -8,12 +8,16 @@ import com.scaler.project.productservice.projections.ProductWithIdAndTitle;
 import com.scaler.project.productservice.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
-import static com.scaler.project.productservice.constant.FakeStoreURI.GET_PRODUCT_URI;
+import static com.scaler.project.productservice.constant.FakeStoreURI.*;
 
 @Service
 @Primary
@@ -58,11 +62,30 @@ public class FakeStoreProductService implements ProductService {
 
     @Override
     public Product createProduct(Product product) {
-        return null;
+        Product newProduct = restTemplate.postForObject(POST_PRODUCT_URI, product, Product.class);
+        return newProduct;
     }
 
     @Override
     public ProductWithIdAndTitle getProductByIdAndTitle(Long id) {
         return null;
+    }
+
+    @Override
+    public Product updateProduct(Product product) {
+        Long id = product.getId();
+        String uri = PUT_PRODUCT_URI + id;
+        //restTemplate.put(uri, product);
+        RequestCallback requestCallback = restTemplate.httpEntityCallback(product, Product.class);
+        ResponseExtractor<ResponseEntity<Product>> responseExtractor = restTemplate.responseEntityExtractor(Product.class);
+        ResponseEntity<Product> productResponseEntity = restTemplate.execute(uri, HttpMethod.PUT, requestCallback, responseExtractor);
+        Product updatedProduct = productResponseEntity.getBody();
+        return updatedProduct;
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+        String url = DELETE_PRODUCT_URI + id;
+        restTemplate.delete(url);
     }
 }
