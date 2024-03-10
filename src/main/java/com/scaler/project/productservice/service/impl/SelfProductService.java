@@ -51,4 +51,14 @@ public class SelfProductService implements ProductService {
         ProductWithIdAndTitle productWithIdAndTitle =  productRepository.findProductWithIdAndTitle(id);
         return productWithIdAndTitle;
     }
+
+    @Override
+    public Product updateProduct(Product product) {
+        return null;
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+
+    }
 }
