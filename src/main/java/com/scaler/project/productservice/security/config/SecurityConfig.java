@@ -13,7 +13,7 @@ public class SecurityConfig {
         return httpSecurity
                 .authorizeHttpRequests(request -> request
                         .anyRequest()
-                        .authenticated())
+                        .permitAll())
                 .build();
     }
 }
