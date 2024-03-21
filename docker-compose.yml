@@ -19,8 +19,8 @@ services:
 
 
   product-service:
-    image:
-    container_name:
+    image: rjtdessai18/product-service:0.0.1-SNAPSHOT
+    container_name: product-service
     ports:
       - 8081:8081
     healthcheck:
@@ -42,3 +42,7 @@ services:
       SPRING_APPLICATION_NAME: ProductService
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8888/
       SPRING_PROFILES_ACTIVE: dev
+
+networks:
+  scaler:
+    driver: bridge
