@@ -1,7 +1,7 @@
 package com.scaler.project.productservice.elastic.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import com.scaler.project.productservice.models.Product;
+import com.scaler.project.productservice.elastic.models.ProductIndex;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +16,12 @@ public class ElasticService {
         this.elasticsearchClient = elasticsearchClient;
     }
 
-    public Long save(Product product) {
-        Product savedEntity = elasticsearchOperations.save(product);
+    public Long save(ProductIndex productIndex) {
+        ProductIndex savedEntity = elasticsearchOperations.save(productIndex);
         return savedEntity.getId();
     }
 
-    public Product findById(Long id) {
-        return elasticsearchOperations.get(id.toString(), Product.class);
+    public ProductIndex findById(Long id) {
+        return elasticsearchOperations.get(id.toString(), ProductIndex.class);
     }
 }
