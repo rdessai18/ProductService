@@ -17,6 +17,24 @@ services:
     networks:
       - scaler
 
+  product-service-db:
+    image: mysql:latest
+    container_name: product-service-db
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: product_service_db
+    networks:
+      - scaler
+
+
 
   product-service:
     image: rjtdessai18/product-service:0.0.1-SNAPSHOT
@@ -36,12 +54,17 @@ services:
     depends_on:
       config-server:
         condition: service_completed_successfully
+      product-service-db:
+        condition: service_healthy
     networks:
       - scaler
     environment:
       SPRING_APPLICATION_NAME: ProductService
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8888/
       SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:mysql://${MYSQL_HOST:product-service-db}:3306/product_service_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
 
 networks:
   scaler:
