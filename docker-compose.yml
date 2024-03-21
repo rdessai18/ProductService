@@ -1,0 +1,44 @@
+services:
+  config-server:
+    image: rjtdessai18/config-server:0.0.1-SNAPSHOT
+    container_name: config-server
+    ports:
+      - 8888:8888
+    healthcheck:
+      test: "curl --fail --silent localhost:8888/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - scaler
+
+
+  product-service:
+    image:
+    container_name:
+    ports:
+      - 8081:8081
+    healthcheck:
+      test: "curl --fail --silent localhost:8081/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    depends_on:
+      config-server:
+        condition: service_completed_successfully
+    networks:
+      - scaler
+    environment:
+      SPRING_APPLICATION_NAME: ProductService
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888/
+      SPRING_PROFILES_ACTIVE: dev
