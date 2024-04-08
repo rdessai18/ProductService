@@ -1,4 +1,5 @@
 services:
+  # Config Server
   config-server:
     image: rjtdessai18/config-server:0.0.1-SNAPSHOT
     container_name: config-server
@@ -17,6 +18,7 @@ services:
     networks:
       - scaler
 
+  # MySQL DB
   product-service-db:
     image: mysql:latest
     container_name: product-service-db
@@ -34,8 +36,29 @@ services:
     networks:
       - scaler
 
+  # Redis Cache
+  redis-service:
+    image: redis:alpine
+    container_name: redis-service
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - scaler
 
+  # Elasticsearch
+  elasticsearch:
+    image: elasticsearch:8.8.0
+    hostname: elasticsearch
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    networks:
+      - scaler
 
+  # ProductService
   product-service:
     image: rjtdessai18/product-service:0.0.1-SNAPSHOT
     container_name: product-service
@@ -60,11 +83,15 @@ services:
       - scaler
     environment:
       SPRING_APPLICATION_NAME: ProductService
-      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888/
+      SERVER_PORT: 8081
+      SPRING_CONFIG_IMPORT: http://config-server:8888/
       SPRING_PROFILES_ACTIVE: dev
-      SPRING_DATASOURCE_URL: jdbc:mysql://${MYSQL_HOST:product-service-db}:3306/product_service_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://product-service-db:3306/product_service_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATA_REDIS_HOST: redis-service
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_ELASTICSEARCH_CONNECTIONURL: elasticsearch:9200
 
 networks:
   scaler:
